@@ -4,16 +4,24 @@
  * @param body  The request body (only relevant for POST and PUT)
  * @returns 
  */
-export function makeOptions(method: string, body: object | null): RequestInit {
+export function makeOptions(method: string, body: object | null, useToken?: boolean): RequestInit {
   const opts: RequestInit = {
     method: method,
-    headers: {
+    headers: <Record<string, string>>{
       "Content-type": "application/json",
       Accept: "application/json",
     },
   };
   if (body) {
     opts.body = JSON.stringify(body);
+  }
+  if (useToken) {
+    //set the token in the header
+    const token = localStorage.getItem("token");
+    if (token) {
+      // @ts-ignore
+      opts.headers["Authorization"] = "Bearer " + token;
+    }
   }
   return opts;
 }

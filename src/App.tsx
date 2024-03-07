@@ -20,15 +20,15 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/categories/" element={<Categories />} />
         <Route path="/recipes" element={<RecipesLayout />}>
-          <Route index element={<Recipes />} />
+          {/* <Route index element={<Recipes />} /> */}
           <Route path=":id" element={<Recipe />} />
 
-          <Route path="test" element={<h1>Test</h1>} />
+          {/* <Route path="test" element={<h1>Test</h1>} /> */}
         </Route>
         <Route
           path="/add"
           element={
-            <RequireAuth roles={["ADMIN"]}>
+            <RequireAuth roles={["ADMIN", "USER"]}>
               <RecipeForm />
             </RequireAuth>
           }

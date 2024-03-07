@@ -14,11 +14,11 @@ export default function RecipeList() {
 
   useEffect(() => {
     getRecipes(category)
-      .then((res) => setRecipes(res))
+      .then(res => setRecipes(res))
       .catch(() => setError("Error fetching recipes, is the server running?"));
   }, [category]);
 
-  const recipeListItems = recipes.map((recipe) => {
+  const recipeListItems = recipes.map(recipe => {
     return (
       <li key={recipe.id}>
         <Link to={`${recipe.id}`}>{recipe.name}</Link>,{/*TODO:Eventually this should only be added for a logged in user*/}
@@ -43,7 +43,7 @@ export default function RecipeList() {
           <button
             onClick={() => {
               setCategory(null);
-              getRecipes(null).then((res) => setRecipes(res));
+              getRecipes(null).then(res => setRecipes(res));
             }}
           >
             Clear

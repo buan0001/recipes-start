@@ -3,8 +3,8 @@ import { makeOptions, handleHttpErrors } from "./fetchUtils";
 const CATEGORIES_URL = API_URL + "/categories";
 const RECIPE_URL = API_URL + "/recipes";
 const INFO_URL = API_URL + "/info";
-const CACHE_TIME = 1 * 60 * 1000; // 5 min cache
-const LAST_FETCH = { categories: 0, recipes: 0, info: 0 };
+const CACHE_TIME = 1 * 60 * 1000; // 1 min cache
+const LAST_FETCH = { categories: 0, recipes: 0 };
 
 interface Recipe {
   id: number | null;
@@ -23,44 +23,33 @@ interface Info {
   info: string;
 }
 
-// interface Category {
-//   recipes: Array<Recipe>;
-//   created: string;
-//   edited: string;
-// id: number;
-// name: string;}
-
 let categories: Array<string> = [];
 let info: Info | null = null;
 let recipes: Array<Recipe> = [];
 
 async function getCategories(): Promise<Array<string>> {
-  if (categories.length > 0) return [...categories];
-  // const res = await fetch("http://localhost:8080/categories");
-  // console.log(res,"res");
-  
-  // const result = await res.json()
-  // console.log("GETTING CATEGORIES",result);
+  if (LAST_FETCH.categories > Date.now() - CACHE_TIME) return [...categories];
   
   const res = await fetch(CATEGORIES_URL).then(handleHttpErrors);
   categories = [...res];
-  console.log("result", res);
-  console.log("categories", categories);
+  LAST_FETCH.categories = Date.now();
 
   return res;
 }
+
 async function getRecipes(category: string | null): Promise<Array<Recipe>> {
-  // if (recipes.length > 0) return recipes;
+  if (LAST_FETCH.recipes > Date.now() - CACHE_TIME) return [...recipes];
   console.log("category", category);
   const queryParams = category ? "?category=" + category : "";
   const res = await fetch(RECIPE_URL + queryParams).then(handleHttpErrors);
   recipes = [...res];
+  LAST_FETCH.recipes = Date.now();
   console.log("recipes", recipes);
 
   return res;
 }
+
 async function getRecipe(id: number): Promise<Recipe> {
-  //if (recipes.length > 0) return [...recipes];
   return fetch(RECIPE_URL + "/" + id).then(handleHttpErrors);
 }
 async function addRecipe(newRecipe: Recipe): Promise<Recipe> {
